@@ -19,8 +19,13 @@ export const syncUserCreation = inngest.createFunction(
       imageUrl: image_url,
     };
 
-    await connectDB();
-    await User.create(userData);
+    try {
+      await connectDB();
+      await User.create(userData);
+    } catch (error) {
+      console.error("Error creating user:", error);
+      throw error;
+    }
   }
 );
 
@@ -33,14 +38,20 @@ export const syncUserUpdation = inngest.createFunction(
 
     const userData = {
       _id: id,
-      email: email_addresses[0].email_address, 
+      email: email_addresses[0].email_address,
       name: `${first_name} ${last_name}`,
       imageUrl: image_url,
     };
 
-    await connectDB();
-    await User.findByIdAndUpdate(id, userData, { new: true });
-})
+    try {
+      await connectDB();
+      await User.findByIdAndUpdate(id, userData, { new: true });
+    } catch (error) {
+      console.error("Error updating user:", error);
+      throw error;
+    }
+  }
+);
 
 // Inngest Function to delete user from database
 export const syncUserDeletion = inngest.createFunction(
@@ -49,7 +60,12 @@ export const syncUserDeletion = inngest.createFunction(
   async ({ event }) => {
     const { id } = event.data;
 
-    await connectDB();
-    await User.findByIdAndDelete(id);
+    try {
+      await connectDB();
+      await User.findByIdAndDelete(id);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      throw error;
+    }
   }
 );
